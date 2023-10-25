@@ -1,6 +1,8 @@
 package single_types
 
 import (
+	"fmt"
+	"reflect"
 	"strconv"
 
 	"LI3_go/csv_parser"
@@ -61,4 +63,40 @@ func CreateUser(data []string) User {
 		PublicGists:   public_gists,
 		PublicRepos:   public_repos,
 	}
+}
+
+func (u1 *User) Equal(u2 User) bool {
+	return u1.Id == u2.Id &&
+		u1.Login == u2.Login &&
+		u1.Type_ == u2.Type_ &&
+		u1.CreatedAt == u2.CreatedAt &&
+		u1.Followers == u2.Followers &&
+		reflect.DeepEqual(u1.FollowerList, u2.FollowerList) &&
+		u1.Following == u2.Following &&
+		reflect.DeepEqual(u1.FollowingList, u2.FollowingList) &&
+		u1.PublicGists == u2.PublicGists &&
+		u1.PublicRepos == u2.PublicRepos
+}
+
+func (u1 User) String() string {
+	return "User{" +
+		fmt.Sprintf("%d", u1.Id) + "," +
+		u1.Login + "," +
+		u1.CreatedAt + "," +
+		fmt.Sprintf("%d", u1.Followers) + "," +
+		printSlice(u1.FollowerList) + "," +
+		fmt.Sprintf("%d", u1.Following) + "," +
+		printSlice(u1.FollowingList) + "," +
+		fmt.Sprintf("%d", u1.PublicGists) + "," +
+		fmt.Sprintf("%d", u1.PublicRepos) + "}"
+}
+
+func printSlice(slice []uint64) string {
+	str := "{"
+	len_ := len(slice) - 1
+	for i := 0; i < len_; i++ {
+		str += fmt.Sprintf("%d", slice[i]) + ","
+	}
+	str += fmt.Sprintf("%d", slice[len_]) + "}"
+	return str
 }

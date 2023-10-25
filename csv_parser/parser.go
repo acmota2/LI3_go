@@ -22,9 +22,11 @@ func ConvertData(f *bufio.Reader) [][]string {
 }
 
 func ParseVec(vec string) []uint64 {
-	to_transform := strings.Split(vec, ", ")
+	to_transform := strings.Split(vec, "[")
+	to_transform = strings.Split(to_transform[1], "]")
+	to_transform = strings.Split(to_transform[0], ", ")
 	var result []uint64 = nil
-	for _, i := range to_transform[:len(to_transform)-1] {
+	for _, i := range to_transform {
 		u, _ := strconv.ParseUint(i, 10, 64)
 		result = append(result, u)
 	}
