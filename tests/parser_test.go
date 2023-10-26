@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	parser "LI3_go/csv_parser"
+	parser "LI3_go/csvParser"
 )
 
 func TestParse(t *testing.T) {

@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"LI3_go/catalog"
-	parser "LI3_go/csv_parser"
-	st "LI3_go/single_types"
+	parser "LI3_go/csvParser"
+	st "LI3_go/singleTypes"
 )
 
 var ExpectedCommit = st.Commit{
@@ -57,7 +57,7 @@ func TestCatalogHash(t *testing.T) {
 }
 
 func TestReadUser(t *testing.T) {
-	u := setup("./users_test.csv", st.CreateUser, st.CreateUserKey)
+	u := setup("./users_test.csv", st.CreateUser, st.UserKeyFunc)
 
 	current := u.View[0]
 	if !ExpectedUser.Equal(*current) {

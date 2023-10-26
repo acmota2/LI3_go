@@ -1,4 +1,4 @@
-package single_types
+package singleTypes
 
 import (
 	"fmt"

@@ -1,19 +1,19 @@
-package single_types
+package singleTypes
 
 import (
 	"fmt"
 	"reflect"
 	"strconv"
 
-	"LI3_go/csv_parser"
+	"LI3_go/csvParser"
 )
 
 type UserType int
 
 const (
-	bot          UserType = iota
-	organization UserType = iota
-	user         UserType = iota
+	Bot          UserType = iota
+	Organization UserType = iota
+	User_        UserType = iota
 )
 
 type User struct {
@@ -29,25 +29,25 @@ type User struct {
 	PublicRepos   uint64
 }
 
-func CreateUserKey(u *User) uint64 {
+func UserKeyFunc(u *User) uint64 {
 	return u.Id
 }
 
 func CreateUser(data []string) User {
 	id, _ := strconv.ParseUint(data[0], 10, 64)
-	type_ := user
+	type_ := User_
 	switch data[2] {
 	case "Bot", "bot":
-		type_ = bot
+		type_ = Bot
 	case "Organization", "organization":
-		type_ = organization
+		type_ = Organization
 	case "User", "user":
-		type_ = user
+		type_ = User_
 	}
 	followers, _ := strconv.ParseUint(data[4], 10, 64)
-	follower_list := csv_parser.ParseVec(data[5])
+	follower_list := csvParser.ParseVec(data[5])
 	following, _ := strconv.ParseUint(data[6], 10, 64)
-	following_list := csv_parser.ParseVec(data[7])
+	following_list := csvParser.ParseVec(data[7])
 	public_gists, _ := strconv.ParseUint(data[8], 10, 64)
 	public_repos, _ := strconv.ParseUint(data[9], 10, 64)
 
