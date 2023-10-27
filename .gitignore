@@ -22,4 +22,4 @@ LI3_go
 go.work
 
 # mine
-misc/*
+misc/*.csv
