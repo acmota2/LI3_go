@@ -17,11 +17,11 @@ func ReadQueries(
 ) {
 	for {
 		l, err := cfg.ReadString('\n')
-		l = strings.TrimSuffix(l, "\n")
-		current_line := string(l)
 		if err != nil {
 			break
 		}
+		l = strings.TrimSuffix(l, "\n")
+		current_line := string(l)
 		query := strings.Split(current_line, " ")
 		fmt.Println(enqueueQuery(query, commits, repos, users))
 	}
@@ -48,17 +48,15 @@ func enqueueQuery(
 		result = Query5(n, query[2]+" 00:00:00", query[3]+" 23:59:59", commits, users)
 	case "6":
 		n, _ := strconv.ParseUint(query[1], 10, 64)
-		result = Query6(n, strings.ToLower(query[1]), commits, repos, users)
+		result = Query6(n, strings.ToLower(query[2]), commits, repos, users)
 	case "7":
-		result = Query7(query[0], commits, repos)
+		result = Query7(query[1]+" 00:00:00", commits, repos)
 	case "8":
 		n, _ := strconv.ParseUint(query[1], 10, 64)
 		result = Query8(n, query[1]+" 00:00:00", repos)
 	case "9":
 		n, _ := strconv.ParseUint(query[1], 10, 64)
 		result = Query9(n, commits, users)
-		/* 	case "10":
-		result = "" */
 	}
 	return result
 }

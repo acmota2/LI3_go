@@ -7,6 +7,7 @@
 *.dll
 *.so
 *.dylib
+LI3_go
 
 # Test binary, built with `go test -c`
 *.test

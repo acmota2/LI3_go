@@ -79,9 +79,19 @@ func (u1 *User) Equal(u2 User) bool {
 }
 
 func (u1 User) String() string {
+	var type_ string
+	switch u1.Type_ {
+	case Bot:
+		type_ = "bot"
+	case Organization:
+		type_ = "organization"
+	case User_:
+		type_ = "user"
+	}
 	return "User{" +
 		fmt.Sprintf("%d", u1.Id) + "," +
 		u1.Login + "," +
+		type_ + "," +
 		u1.CreatedAt + "," +
 		fmt.Sprintf("%d", u1.Followers) + "," +
 		printSlice(u1.FollowerList) + "," +

@@ -16,7 +16,6 @@ func fileConfig(filePath string) *bufio.Reader {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer f.Close()
 	return bufio.NewReader(f)
 }
 
@@ -24,6 +23,7 @@ func filePathDebunker(cfg *bufio.Reader) map[string]string {
 	filePaths := map[string]string{}
 	for i := 0; i < 3; i++ {
 		line, err := cfg.ReadString('\n')
+		line = strings.Trim(line, "\n")
 
 		if err != nil {
 			log.Fatal(err)
@@ -35,7 +35,7 @@ func filePathDebunker(cfg *bufio.Reader) map[string]string {
 		case "repos":
 			filePaths["repos"] = cur[1]
 		case "users":
-			filePaths["users"] = cur[i]
+			filePaths["users"] = cur[1]
 		default:
 			log.Fatal("Wrong format")
 		}

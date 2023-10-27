@@ -22,8 +22,9 @@ func Query1(users *catalog.Catalog[uint64, st.User]) string {
 		}
 	}
 	return fmt.Sprintf(`Bot: %d
-	Organization: %d
-	User: %d`,
+Organization: %d
+User: %d
+`,
 		bot,
 		organization,
 		user)
@@ -33,29 +34,30 @@ func Query2(
 	commits *catalog.Catalog[string, st.Commit],
 	repos *catalog.Catalog[uint64, st.Repo],
 ) string {
-	return fmt.Sprintf("%.2f", float64(len(commits.View))/float64(len(repos.View)))
+	return fmt.Sprintf("%.2f\n", float64(len(commits.View))/float64(len(repos.View)))
 }
 
 func Query3(
 	commits *catalog.Catalog[string, st.Commit],
 	users *catalog.Catalog[uint64, st.User],
 ) string {
-	repos, count := map[uint64]bool{}, 0
+	repos, count := map[uint64]struct{}{}, 0
 	isBot := func(id uint64) bool { return users.Hash[id].Type_ == st.Bot }
 	for _, c := range commits.View {
-		if _, ok := repos[c.Repo_id]; isBot(c.Author_id) && !ok {
-			repos[c.Repo_id] = true
+		if _, ok := repos[c.Repo_id]; isBot(c.Committer_id) && !ok {
+			fmt.Println(c.Committer_id)
+			repos[c.Repo_id] = struct{}{}
 			count++
 		}
 	}
-	return fmt.Sprintf("%d", count)
+	return fmt.Sprintf("%d\n", count)
 }
 
 func Query4(
 	commits *catalog.Catalog[string, st.Commit],
 	users *catalog.Catalog[uint64, st.User],
 ) string {
-	return fmt.Sprintf("%.2f", float64(len(commits.View))/float64(len(users.View)))
+	return fmt.Sprintf("%.2f\n", float64(len(commits.View))/float64(len(users.View)))
 }
 
 type query56Data struct {
@@ -65,7 +67,7 @@ type query56Data struct {
 }
 
 func query56cmp(a query56Data, b query56Data) int {
-	return cmp.Compare(a.CommitQt, b.CommitQt)
+	return cmp.Compare(b.CommitQt, a.CommitQt)
 }
 
 func mapToSlice[K comparable, T any](m map[K]T) []T {
@@ -85,12 +87,13 @@ func Query5(
 ) string {
 	resultMap := map[uint64]query56Data{}
 	for _, c := range commits.View {
-		curUser := c.Author_id
+		curUser := c.Committer_id
 		val, ok := resultMap[curUser]
 		if !ok {
-			resultMap[curUser] = query56Data{
-				Id:       c.Author_id,
-				Login:    users.Hash[curUser].Login,
+			uVal := users.Hash[curUser]
+			val = query56Data{
+				Id:       curUser,
+				Login:    uVal.Login,
 				CommitQt: 0,
 			}
 		}
@@ -123,7 +126,7 @@ func Query6(
 		if repo := repos.Hash[repoId]; strings.ToLower(repo.Language) == lang {
 			val, ok := resultMap[authorId]
 			if !ok {
-				resultMap[authorId] = query56Data{
+				val = query56Data{
 					Id:       authorId,
 					Login:    users.Hash[authorId].Login,
 					CommitQt: 0,
@@ -136,9 +139,12 @@ func Query6(
 
 	querySlice := mapToSlice(resultMap)
 	slices.SortStableFunc(querySlice, query56cmp)
-	var result string
 
-	for _, q := range querySlice[:nUsers] {
+	var result string
+	for i, q := range querySlice {
+		if uint64(i) > nUsers {
+			break
+		}
 		result += fmt.Sprintf("%d;%s;%d\n", q.Id, q.Login, q.CommitQt)
 	}
 
@@ -150,7 +156,7 @@ func Query7(
 	commits *catalog.Catalog[string, st.Commit],
 	repos *catalog.Catalog[uint64, st.Repo],
 ) string {
-	reposResult := make(map[uint64]struct{})
+	reposResult := map[uint64]struct{}{}
 	for k := range repos.Hash {
 		reposResult[k] = struct{}{}
 	}
@@ -164,7 +170,7 @@ func Query7(
 	var result string
 	for _, r := range repos.View {
 		if _, ok := reposResult[r.Id]; ok {
-			result += fmt.Sprintf("%d;%s", r.Id, r.Description)
+			result += fmt.Sprintf("%d;%s\n", r.Id, r.Description)
 		}
 	}
 	return result
@@ -176,7 +182,7 @@ type query8Data struct {
 }
 
 func cmpQuery8(a, b query8Data) int {
-	return cmp.Compare(a.count, b.count)
+	return cmp.Compare(b.count, a.count)
 }
 
 func Query8(
@@ -189,7 +195,7 @@ func Query8(
 		curLang := strings.ToTitle(r.Language)
 		current, ok := resultMap[curLang]
 		if !ok {
-			resultMap[curLang] = 0
+			current = 0
 		}
 		current++
 		resultMap[curLang] = current
@@ -202,8 +208,11 @@ func Query8(
 	slices.SortFunc(toSort, cmpQuery8)
 
 	var result string
-	for _, q8 := range toSort[:nLang] {
-		result += q8.lang
+	for i, q8 := range toSort {
+		if uint64(i) > nLang {
+			break
+		}
+		result += q8.lang + "\n"
 	}
 	return result
 }
@@ -227,7 +236,7 @@ func isFriend(id uint64, u *st.User) bool {
 }
 
 func cmpQuery9(a, b query9Data) int {
-	return cmp.Compare(a.count, b.count)
+	return cmp.Compare(b.count, a.count)
 }
 
 func Query9(
@@ -241,7 +250,7 @@ func Query9(
 		if c.Author_id != cId && isFriend(cId, users.Hash[c.Author_id]) {
 			val, ok := resultData[cId]
 			if !ok {
-				resultData[cId] = 0
+				val = 0
 			}
 			val++
 			resultData[cId] = val
@@ -259,7 +268,7 @@ func Query9(
 		u := users.Hash[val.user]
 		login := u.Login
 		result += fmt.Sprintf(
-			"%d;%s;count: %d",
+			"%d;%s;count: %d\n",
 			val.user,
 			login,
 			val.count,
