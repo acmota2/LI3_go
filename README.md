@@ -56,11 +56,11 @@ As a means to an end, it was expected to find a suitable way to store these file
 
 The chosen architecture, very keen on the C architecture I chose when attending this subject, consists of cataloging all 3 files in a slice, which has a view for better access (array of pointers) and a hashtable of references to each element of the catalog, using a suitable id.
 
-A better architecture could have probably be chosen, something more akin to a relational's database internal structure, for example, but as I was using this project as a learning experience, I decided to go for the same kind of idea I went when idealizing it in C.
+A better architecture could have probably been chosen, something more akin to a relational's database internal structure, for example, but as I was using this project as a learning experience, I decided to go for the same kind of idea I had when idealizing it in C.
 
 ### Queries
 
-The project initially had 10 queries, of which I chose the first 9 to implement, as the 10th query had already questions regarding how it should be executed at the time of attendance of this subject, and these are as follows:
+The project initially had 10 queries, of which I chose the first 9 to implement, as the 10th query had already doubts regarding how it should be executed at the time of attendance of this subject, and these are as follows:
 
 #### Statistical queries:
 
